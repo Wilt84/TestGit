@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <title>Toevoegen nieuwe medewerker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+
+$(document).ready( () => {
+  $.ajax('http://localhost:8080/departments', {'method':'GET'})
+   .done( function(data) {
+     $.each(data, function(idx, el) {
+       let h = `<option value='${el.department_id}'>${el.department_name}</option>`
+       $("#department_id").html($("#department_id").html() + h)
+     })
+   })
+   .fail( function(e) { console.log(e)} )
+
+  $.ajax('http://localhost:8080/jobs', {'method':'GET'})
+   .done( function(data) {
+     $.each(data, function(idx, el) {
+       let h = `<option value='${el.job_id}'>${el.job_title}</option>`
+       $("#job_id").html($("#job_id").html() + h)
+     })
+   })
+   .fail( function(e) { console.log(e)} )
+
+  $("#sbmt").on('click', function() {
+    let msg = {}
+
+    let els = document.getElementsByTagName('input')
+    $.each(els, (idx, el) => {
+      if (el.name != '') msg[el.name] = el.value
+    })
+
+    let selects = document.getElementsByTagName('select')
+    $.each(selects, (idx, sel) => {
+      msg[sel.name] = sel.options[sel.selectedIndex].value
+    })
+
+
+    console.log(JSON.stringify(msg))
+
+
+  })
+
+  /*
+
+    formToJson()
+    /*
+    $.ajax('http://localhost:8080/employee/', {'method':'POST', contentType:'application/json', 'data':data })
+     .done( function(e) { console.log(e) } )
+     .fail( function(e) { console.log('hier') } )
+
+   })
+   */
+
+
+   function formToJson() {
+     var rv = []
+     let f = $("#newemp *").filter(':input').each( (idx, el) => {
+       if(el.name!='')  rv[el.name] = el.value
+     })
+
+     console.log(JSON.stringify(rv))
+
+   }
+
+})
+
+</script>
+
+</head>
+<body>
+
+<form id="newemp">
+    <input type="text" name="first_name" placeholder="Voornaam"/><br/>
+    <input type="text" name="last_name" placeholder="Achternaam"/><br/>
+    <input type="text" name="email" placeholder="e-mailadres"/><br/>
+    <input type="text" name="phone_number" placeholder="telefoonnummer"/><br/>
+    <input type="text" name="hire_date" placeholder="datum in dienst"/><br/>
+    <select name="job_id" id="job_id"></select><br/>
+    <input type="text" name="salary" placeholder="Salaris"/><br/>
+    <input type="text" name="manager_id" value="146"/><br/>
+    <select name="department_id" id="department_id"></select>
+    <input id="sbmt" type="button" value="GO"/>
+
+</form>
+</body></html>
